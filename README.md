@@ -1,6 +1,6 @@
 
 
-# **Chemical Equipment Parameter Visualizer**
+# **Chemical Equipment Parameter Visualizer 🧪**
 
 A full-stack web and desktop application for analyzing chemical equipment parameters with data visualization, PDF reporting, and historical data management.
 
