@@ -303,17 +303,12 @@ Contributions are welcome! Please follow these steps:
 
 ***
 
-## **📝 License**
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-***
 
 ## **👨‍💻 Author**
 
 **Your Name**
-- GitHub: [@your_username](https://github.com/your_username)
-- Email: your.email@example.com
+- GitHub: [@CH4RUU](https://github.com/CH4RUU)
+- Email: charvsn@gmail.com
 
 ***
 
