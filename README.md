@@ -285,11 +285,7 @@ Compressor-1,Compressor,150,12.5,140
 
 ***
 
-## **🖼️ Screenshots**
 
-*(Add screenshots of your application here)*
-
-***
 
 ## **🤝 Contributing**
 
