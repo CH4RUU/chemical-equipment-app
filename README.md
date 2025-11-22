@@ -34,6 +34,10 @@ The Chemical Equipment Parameter Visualizer is a comprehensive solution for anal
 
 ***
 
+## 🌐 Demo Video Link
+
+- [LINK](https://drive.google.com/file/d/1xIy0FCvvXMEjrCIqhvYc45bWPAaw0D7n/view?usp=sharing)
+
 ## **✨ Features**
 
 - ✅ **CSV Upload & Analysis** - Upload equipment data and get instant analysis
