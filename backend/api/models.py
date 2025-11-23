@@ -3,12 +3,12 @@ from django.contrib.auth.models import User
 
 class EquipmentDataset(models.Model):
     """Model to store uploaded equipment datasets"""
-    user = models.ForeignKey(User, on_delete=models.CASCADE)  # ADD THIS LINE
+    user = models.ForeignKey(User, on_delete=models.CASCADE) 
     filename = models.CharField(max_length=255)
-    csv_data = models.TextField()  # Store CSV as text
+    csv_data = models.TextField()  
     upload_date = models.DateTimeField(auto_now_add=True)
     
-    # Aggregated statistics
+   
     total_count = models.IntegerField()
     avg_flowrate = models.FloatField()
     avg_pressure = models.FloatField()
