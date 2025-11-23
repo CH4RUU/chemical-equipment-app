@@ -19,44 +19,43 @@ from reportlab.pdfgen import canvas
 
 #View 1: CSV Upload
 class UploadCSVView(APIView):
-    parser_classes = [MultiPartParser]  # Handle file uploads
-    permission_classes = [IsAuthenticated]  # Require login
+    parser_classes = [MultiPartParser] 
+    permission_classes = [IsAuthenticated]  
     
     def post(self, request):
         try:
-            # Step 1: Get the uploaded file from request
+           
             file_obj = request.FILES['file']
             
-            # Step 2: Read CSV into pandas DataFrame
+          
             df = pd.read_csv(file_obj)
             
-            # Step 3: Calculate statistics
-            total_count = len(df)  # Number of rows
-            avg_flowrate = df['Flowrate'].mean()  # Average of Flowrate column
+          
+            total_count = len(df) 
+            avg_flowrate = df['Flowrate'].mean() 
             avg_pressure = df['Pressure'].mean()
             avg_temperature = df['Temperature'].mean()
             
-            # Step 4: Count equipment by type
-            # Example: {'Pump': 4, 'Valve': 3, ...}
+            
             type_distribution = df['Type'].value_counts().to_dict()
             
-            # Step 5: Save to database WITH USER
+            # Step 5:Save to database WITH USER
             dataset = EquipmentDataset.objects.create(
-                user=request.user,  # ADD THIS LINE - IMPORTANT!
+                user=request.user, 
                 filename=file_obj.name,
                 total_count=total_count,
                 avg_flowrate=avg_flowrate,
                 avg_pressure=avg_pressure,
                 avg_temperature=avg_temperature,
-                csv_data=df.to_csv(index=False)  # Convert back to CSV string
+                csv_data=df.to_csv(index=False)  
             )
             
-            # Step 6: Keep only last 5 datasets per user
+        
             old_datasets = EquipmentDataset.objects.filter(user=request.user).order_by('-upload_date')[5:]
             for old in old_datasets:
                 old.delete()
             
-            # Step 7: Return response to frontend
+          
             return Response({
                 'id': dataset.id,
                 'total_count': total_count,
@@ -66,11 +65,11 @@ class UploadCSVView(APIView):
                     'temperature': round(avg_temperature, 2)
                 },
                 'type_distribution': type_distribution,
-                'data': df.to_dict('records')  # Convert DataFrame to list of dicts
+                'data': df.to_dict('records')  
             }, status=status.HTTP_201_CREATED)
             
         except Exception as e:
-            # If anything goes wrong, return error
+          
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 #View 2: History
@@ -83,13 +82,11 @@ class HistoryView(APIView):
     
     def get(self, request):
         try:
-            # Get last 5 datasets for the authenticated user
+           
             datasets = EquipmentDataset.objects.filter(user=request.user).order_by('-upload_date')[:5]
             
-            # Serialize with complete summary information
             history_data = []
             for dataset in datasets:
-                # Parse CSV data to get type distribution
                 df = pd.read_csv(StringIO(dataset.csv_data))
                 type_distribution = df['Type'].value_counts().to_dict()
                 
@@ -124,23 +121,21 @@ from .models import EquipmentDataset
 import pandas as pd
 from io import StringIO
 
-#View 3: PDF Generation - ENHANCED
+#View 3: PDF Generation
 class GeneratePDFView(APIView):
     permission_classes = [IsAuthenticated]
     
     def get(self, request, dataset_id):
         try:
-            # Get specific dataset from database
             dataset = EquipmentDataset.objects.get(id=dataset_id)
             
-            # Create BytesIO buffer
             buffer = BytesIO()
             
             # Create PDF document
             doc = SimpleDocTemplate(buffer, pagesize=letter)
             story = []
             
-            # Get styles
+            
             styles = getSampleStyleSheet()
             title_style = ParagraphStyle(
                 'CustomTitle',
@@ -148,7 +143,7 @@ class GeneratePDFView(APIView):
                 fontSize=24,
                 textColor=colors.HexColor('#007bff'),
                 spaceAfter=30,
-                alignment=1  # Center
+                alignment=1 
             )
             
             heading_style = ParagraphStyle(
@@ -160,18 +155,18 @@ class GeneratePDFView(APIView):
                 spaceBefore=12
             )
             
-            # Title
+            #Title
             story.append(Paragraph("Equipment Analysis Report", title_style))
             story.append(Spacer(1, 0.3*inch))
             
-            # Report Info
+            #Report Info
             report_info = f"<b>Report Generated:</b> {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}<br/>"
             report_info += f"<b>File:</b> {dataset.filename}<br/>"
             report_info += f"<b>Upload Date:</b> {dataset.upload_date.strftime('%Y-%m-%d %H:%M:%S')}"
             story.append(Paragraph(report_info, styles['Normal']))
             story.append(Spacer(1, 0.3*inch))
             
-            # Summary Statistics Section
+            #Summary Statistics Section
             story.append(Paragraph("Summary Statistics", heading_style))
             summary_data = [
                 ['Metric', 'Value'],
@@ -194,7 +189,7 @@ class GeneratePDFView(APIView):
             story.append(summary_table)
             story.append(Spacer(1, 0.3*inch))
             
-            # Equipment Type Distribution
+            #Equipment Type Distribution
             story.append(Paragraph("Equipment Type Distribution", heading_style))
             df = pd.read_csv(StringIO(dataset.csv_data))
             type_dist = df['Type'].value_counts().to_dict()
@@ -258,7 +253,7 @@ class GeneratePDFView(APIView):
             # Build PDF
             doc.build(story)
             
-            # Return PDF
+           
             buffer.seek(0)
             response = HttpResponse(buffer.getvalue(), content_type='application/pdf')
             response['Content-Disposition'] = f'attachment; filename="{dataset.filename}_report.pdf"'
@@ -274,16 +269,16 @@ class GeneratePDFView(APIView):
 #View 4: Authentication
 class CustomAuthToken(ObtainAuthToken):
     def post(self, request, *args, **kwargs):
-        # Validate username and password
+        
         serializer = self.serializer_class(data=request.data,
                                            context={'request': request})
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data['user']
         
-        # Get or create authentication token
+        
         token, created = Token.objects.get_or_create(user=user)
         
-        # Return token to frontend
+     
         return Response({
             'token': token.key,
             'user_id': user.pk,
