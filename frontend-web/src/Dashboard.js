@@ -11,7 +11,7 @@ import {
   Legend,
 } from 'chart.js';
 
-// Register Chart.js components
+
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -72,7 +72,7 @@ function Dashboard({ onLogout }) {
     }
   };
 
-  // Chart data for type distribution
+
   const chartData = data ? {
     labels: Object.keys(data.type_distribution),
     datasets: [
