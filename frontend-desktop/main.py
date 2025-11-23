@@ -4,10 +4,6 @@ This PyQt5 application connects to a Django backend API to upload CSV files,
 analyze equipment data, and generate PDF reports.
 """
 
-# ============================================================================
-# IMPORTS - Import all necessary libraries
-# ============================================================================
-
 import sys
 import os
 import requests
@@ -25,9 +21,6 @@ from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 import pandas as pd
 
-# ============================================================================
-# GLOBAL CONFIGURATION
-# ============================================================================
 
 API_BASE_URL = 'http://localhost:8000/api'
 TOKEN = None
